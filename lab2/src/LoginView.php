@@ -2,14 +2,22 @@
 
 require_once('CookieStorage.php');
 
+// TEMP
+require_once('UserCookies.php');
+
 class LoginView {
 
 	private $loginModel;
 	private $messages;
+	// TEMP
+	private $userCookies;
 
 	public function __construct($loginModel) {
 		$this->loginModel = $loginModel;
 		$this->messages = new CookieStorage();
+
+		// TEMP
+		$this->userCookies = new UserCookies();
 	}
 
 	public function didUserLogin() {
@@ -36,6 +44,10 @@ class LoginView {
 		}
 	}
 
+	public function setRemberMeLoginMessage() {
+		$this->messages->save('Inloggning lyckades och vi kommer ihåg dig nästa gång');
+	}
+
 	public function setLoginMessage() {
 		$this->messages->save('Inloggning lyckades');
 	}
@@ -49,13 +61,86 @@ class LoginView {
 	}
 
 	public function getCredentials() {
-		return array('username' => $_POST['username'], 'password' => $_POST['password']);
+		//return array('username' => $_POST['username'], 'password' => $_POST['password']);
+		return array($_POST['username'], $_POST['password']);
 	}
+
+	// TEMP USERCOOKIES START
+
+	public function cookiesExist() {
+		return $this->userCookies->exists();
+	}
+
+	public function readUserCookies() {
+
+		// Returns array
+			//var_dump($this->userCookies->getCredentials());
+			//die();
+		return $this->userCookies->getCredentials();
+	}
+	
+	public function setCookieLoginMessage() {
+		$this->messages->save('Inloggning lyckades via cookies');
+	}
+
+	public function doRememberMe() {
+		if(isset($_POST['rememberMe']))
+			return true;
+		else
+			return false;
+
+	}
+
+		public function reloadPage() {
+			header('Location: ' . $_SERVER['PHP_SELF']);
+		}
+
+
+	public function removeUserCookies() {
+		$this->userCookies->removeCookies();
+	}
+
+	public function saveCredentials() {
+
+		$this->userCookies->saveUserCredentials($_POST['username'], $_POST['password']);
+	}
+
+	// TEMP USERCOOKIES END
+
+
+	//////////
+	public function saveUserInput() {
+		
+		if(isset($_POST['username']))
+			setcookie('userInput', $_POST['username'], -1);
+	}
+
+	public function getUserInput() {
+		
+		if(isset($_COOKIE['userInput'])) {
+			$userInput = $_COOKIE['userInput'];
+			//setcookie($_COOKIE['userInput'], '', time() - 1);
+			//unset($_COOKIE['userInput']);
+			return $userInput;
+		}
+	}
+	////////
 
 	public function getHTMLLogin() {
 		
+		////
+		//$this->saveUserInput();
+
+		////
+
+
 		if($_SERVER['REQUEST_METHOD'] == 'POST')	
-			header('Location: ' . $_SERVER['PHP_SELF']);
+			$this->reloadPage();
+			//header('Location: ' . $_SERVER['PHP_SELF']);
+
+
+
+
 
 		$output = '
 			<h2>Ej inloggad</h2>
@@ -71,9 +156,36 @@ class LoginView {
 						<input type="text" name="username"';
 
 		// TODO Fix value after header location
-		if(isset($_POST['username']))
-			$output .= 'value' . $_POST['username'];
 
+		/*
+			check for cookie
+
+			if cookie exists read
+
+
+
+		*/
+
+		/*if(isset($_POST['username']))
+			setcookie('userInput', $_POST['username'], -1);
+
+
+		if(isset($_COOKIE['userInput'])) {
+			$output .= ' value="' . $_COOKIE['userInput'] . '"';
+			unset($_COOKIE['userInput']);
+		}*/
+		
+		
+
+
+		//if(isset($_POST['username'])) {
+
+		//	$output .= ' value=' . $_POST['username'];
+		//}
+
+
+
+		//////////////////////////////////////////////
 		$output .= '/>
 					</label>
 					
@@ -83,7 +195,7 @@ class LoginView {
 
 					<label>
 						<input type="checkbox" name="rememberMe"/>
-						Remember me
+						Håll mig inloggad
 					</label>
 			
 					<input type="submit" name="login" value="Logga in"/>
@@ -103,7 +215,8 @@ class LoginView {
 	public function getHTMLLogout() {
 		
 		if($_SERVER['REQUEST_METHOD'] == 'POST')	
-			header('Location: ' . $_SERVER['PHP_SELF']);
+			$this->reloadPage();
+			//header('Location: ' . $_SERVER['PHP_SELF']);
 
 		$output = '<h2>' . $this->loginModel->getUsername() . ' är inloggad</h2>';
 

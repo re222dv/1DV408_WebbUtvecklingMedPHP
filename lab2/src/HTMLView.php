@@ -9,12 +9,14 @@ class HTMLView {
 			<html lang="sv">
 			<head>
 				<meta charset="utf-8"/>
+				<title>Laborationkod no222bd</title>
 			</head>
 				<body>
 					<h1>Laborationkod no222bd</h1>
 					' . $content;
 
 		setlocale(LC_TIME, 'sv_SE');
+		
 		$output .= '<p>' . ucfirst(strftime('%A')) . strftime(', den %e %B år %Y. Klockan är %T.') . '</p>';
 
 		$output .=	'</body>

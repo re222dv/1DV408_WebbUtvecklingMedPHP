@@ -16,13 +16,40 @@ class LoginController {
 	// Reagera på användaren, programmstarter, ingen get, html
 	public function doLogin() {
 
+
+		// TODO if rememberMe cookie is set
+		if($this->loginModel->isLoggedIn() == false){
+
+			if($this->loginView->cookiesExist()){
+				//var_dump($this->loginView->readUserCookies());
+				//die();
+				if($this->loginModel->checkCredentials($this->loginView->readUserCookies())) {
+					$this->loginView->setCookieLoginMessage();
+					$this->loginView->reloadPage();
+				}
+			}
+
+		}
+
+
+
+
+
 		// If user has clicked on LOGIN-button
 		if($this->loginView->didUserLogin()) {
 			
 			if($this->loginView->isValidInput()) {
 
-				if($this->loginModel->checkCredentials($this->loginView->getCredentials()))
-					$this->loginView->setLoginMessage();
+				if($this->loginModel->checkCredentials($this->loginView->getCredentials())) {
+					if($this->loginView->doRememberMe()) {// Remember me
+						//TEMP
+						$this->loginView->saveCredentials();
+						$this->loginView->setRemberMeLoginMessage();
+					} else {
+
+						$this->loginView->setLoginMessage();
+					}
+				}
 				else
 					$this->loginView->setFailMessage();
 			}
@@ -30,12 +57,30 @@ class LoginController {
 
 		// If user ha clicked on LOGOUT-button
 		if($this->loginView->didUserLogout()) {
+			// Ta bort eventuella userkakor
+				$this->loginView->removeUserCookies();
 			//Ändrar loginstatus på modell
 			$this->loginModel->setLogoutStatus();
 			$this->loginView->setLogoutMessage();
 		}
 
-		// TODO if rememberMe cookie is set
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		// Check login-status and show appropriate html.
 		if($this->loginModel->isLoggedIn())

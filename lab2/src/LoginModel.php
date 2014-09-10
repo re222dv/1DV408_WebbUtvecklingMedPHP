@@ -4,8 +4,10 @@ class LoginModel {
 
 	public function checkCredentials(array $credentials) {
 
-		$username = $credentials['username'];
-		$password = $credentials['password'];
+		//$username = $credentials['username'];
+		//$password = $credentials['password'];
+		$username = $credentials[0];
+		$password = $credentials[1];
 
 		// Temporary solution
 		$userCatalogue = array(
@@ -29,7 +31,10 @@ class LoginModel {
 	}
 
 	public function isLoggedIn() {
-		return $_SESSION['isLoggedIn'];
+		if(isset($_SESSION['isLoggedIn']))
+			return $_SESSION['isLoggedIn'];
+		else
+			return false;
 	}
 
 	public function getUsername() {

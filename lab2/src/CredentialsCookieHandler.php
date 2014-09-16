@@ -2,7 +2,7 @@
 
 // View class
 
-class UserCookies {
+class CredentialsCookieHandler {
 
 	private $usernameCookieName = 'username';
 	private $passwordCookieName = 'password';
@@ -34,8 +34,8 @@ class UserCookies {
 	}
 
 	public function removeCookies() {
-		unset($_COOKIE[$this->usernameCookieName]);
-		unset($_COOKIE[$this->passwordCookieName]);
+		//unset($_COOKIE[$this->usernameCookieName]);
+		//unset($_COOKIE[$this->passwordCookieName]);
 
 		setcookie($this->usernameCookieName, '', time() - 1);
 		setcookie($this->passwordCookieName, '', time() - 1);

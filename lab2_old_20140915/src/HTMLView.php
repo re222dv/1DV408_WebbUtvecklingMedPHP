@@ -15,7 +15,6 @@ class HTMLView {
 					<h1>Laborationkod no222bd</h1>
 					' . $content;
 
-		// Server dependant - currently for UNIX OS			
 		setlocale(LC_TIME, 'sv_SE');
 		
 		$output .= '<p>' . ucfirst(strftime('%A')) . strftime(', den %e %B år %Y. Klockan är %T.') . '</p>';

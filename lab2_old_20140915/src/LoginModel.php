@@ -1,24 +1,22 @@
 <?php
 
-require_once('CredentialsCatalogue.php');
-
 class LoginModel {
-
-	private $credentialsCatalogue;
-
-	public function __construct() {
-		$this->credentialsCatalogue = new CredentialsCatalogue();
-	}
 
 	public function checkCredentials(array $credentials) {
 
-		$catalogue = $this->credentialsCatalogue->getCatalogue();
-		
+		//$username = $credentials['username'];
+		//$password = $credentials['password'];
 		$username = $credentials[0];
 		$password = $credentials[1];
 
-		if(array_key_exists($username, $catalogue)) {
-			if($catalogue[$username] == $password) {
+		// Temporary solution
+		$userCatalogue = array(
+								'Nisse' => 'Pisse',
+								'Admin' => 'Password',
+								);
+
+		if(array_key_exists($username, $userCatalogue)) {
+			if($userCatalogue[$username] == $password) {
 				$_SESSION['username'] = $username;
 				$_SESSION['isLoggedIn'] = true;
 				return true;
@@ -28,7 +26,7 @@ class LoginModel {
 		}
 	}
 
-	public function setStatusToLogout() {
+	public function setLogoutStatus() {
 		$_SESSION['isLoggedIn'] = false;
 	}
 

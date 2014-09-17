@@ -1,21 +1,31 @@
 <?php
 
+// Model
+
 class SessionChecker {
 
-	public function setUserAgent($userAgentString) {
-		if(!isset($_SESSION['userAgent']))
-			$_SESSION['userAgent'] = $userAgentString;
+	private $sessionLocation = 'userAgent';
+
+	public function saveUserAgent($userAgentString) {
+		//if(!isset($_SESSION[$this->sessionLocation]))
+			$_SESSION[$this->sessionLocation] = $userAgentString;
 	}
 
-	public function getValidUserAgent() {
-		if(isset($_SESSION['userAgent']))
-			return $_SESSION['userAgent'];
+	/*public function getValidUserAgent() {
+		if(isset($_SESSION[$this->sessionLocation]))
+			return $_SESSION[$this->sessionLocation];
+	}*/
+
+	public function isUserAgentSet() {
+		return isset($_SESSION[$this->sessionLocation]);
 	}
 
-	public function checkUserAgent($userAgentString) {
-		if($_SESSION['userAgent'] == $userAgentString)
+	public function isValidUserAgent($userAgentString) {
+		return $_SESSION[$this->sessionLocation] == $userAgentString;
+		
+		/*if($_SESSION[$this->sessionLocation] == $userAgentString)
 			return true;
 		else
-			return false;
+			return false;*/
 	}
 }

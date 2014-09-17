@@ -66,6 +66,11 @@ class LoginView {
 		$this->messageCookie->save('Felaktig information i cookie');
 	}
 
+	public function setIllegalSessionMessage() {
+		$this->messageCookie->save('Otillåten session');
+	}
+	
+
 	public function doRememberMe() {
 		if(isset($_POST['rememberMe']))
 			return true;

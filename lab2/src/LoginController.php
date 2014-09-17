@@ -20,13 +20,10 @@ class LoginController {
 	}
 
 	public function doLogin() {
+		if(!$this->sessionChecker->isUserAgentSet())
+			$this->sessionChecker->saveUserAgent($this->loginView->getUserAgent()); 
 
-		//$this->sessionChecker->setUserAgent($this->loginView->getUserAgent());
-
-		if($this->loginModel->isLoggedIn()/* && $this->sessionChecker->checkUserAgent($this->loginView->getUserAgent())*/) {
-			//var_dump($_SESSION);
-			//var_dump($this->sessionCheck->getValidUserAgent());
-			//die();
+		if($this->loginModel->isLoggedIn() && $this->sessionChecker->isValidUserAgent($this->loginView->getUserAgent())) {
 			if($this->loginView->didUserLogout())
 				$this->logout();
 		} else {
@@ -51,23 +48,27 @@ class LoginController {
 	}
 
 	private function login() {
-		if($this->loginView->hasValidInput()) {
-			if($this->loginModel->checkCredentials($this->loginView->getCredentials())) {
-				if($this->loginView->doRememberMe()) {
-					$this->credentialsCookieHandler->saveUserCredentials($this->loginView->getCredentials());
-					$this->loginView->setRemberMeLoginMessage();
-				} else {
-					$this->loginView->setLoginMessage();
+
+		if($this->sessionChecker->isValidUserAgent($this->loginView->getUserAgent())) {
+			if($this->loginView->hasValidInput()) {
+				if($this->loginModel->checkCredentials($this->loginView->getCredentials())) {
+					if($this->loginView->doRememberMe()) {
+						$this->credentialsCookieHandler->saveUserCredentials($this->loginView->getCredentials());
+						$this->loginView->setRemberMeLoginMessage();
+					} else {
+						$this->loginView->setLoginMessage();
+					}
 				}
+				else
+					$this->loginView->setFailMessage();
 			}
-			else
-				$this->loginView->setFailMessage();
+		} else {
+			$this->loginView->setIllegalSessionMessage();
 		}
+
 	}
 
 	private function cookieLogin() {
-		// Spara inte lösenord i klartext
-
 		if($this->credentialsCookieHandler->isValidCookies()
 		&& $this->loginModel->checkCredentials($this->credentialsCookieHandler->getCredentials())) {
 			$this->loginView->setCookieLoginMessage();
@@ -80,7 +81,7 @@ class LoginController {
 	}
 
 	private function getHTML() {
-		if($this->loginModel->isLoggedIn()/* && $this->sessionChecker->checkUserAgent($this->loginView->getUserAgent())*/)
+		if($this->loginModel->isLoggedIn() && $this->sessionChecker->isValidUserAgent($this->loginView->getUserAgent()))
 			return $this->loginView->getLogoutHTML();	
 		else
 			return $this->loginView->getLoginHTML();

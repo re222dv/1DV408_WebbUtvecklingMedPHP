@@ -6,7 +6,7 @@ require_once('src/CookieScrambler.php');
 
 class CredentialsCookieHandler {
 
-	private static $filename = 'cookieTimes.txt';
+	private static $filename = 'cookieTime.txt';
 	private $usernameCookieName = 'username';
 	private $passwordCookieName = 'password';
 	private $cookieScrambler;	

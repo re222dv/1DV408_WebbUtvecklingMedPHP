@@ -14,15 +14,19 @@ class HTMLView {
 				<body>
 					<h1>Laborationkod no222bd</h1>
 					' . $content;
-
-		// Server dependant - currently for UNIX OS			
-		setlocale(LC_TIME, 'sv_SE');
-		
-		$output .= '<p>' . ucfirst(strftime('%A')) . strftime(', den %e %B år %Y. Klockan är %T.') . '</p>';
+	
+		$output .= '<p>' . $this->getSwedishTimestamp() . '</p>';
 
 		$output .=	'</body>
 					</html>';
 
 		echo $output;
+	}
+
+	private function getSwedishTimestamp() {
+		setlocale(LC_TIME, 'sv', 'sv_SE');
+
+		return '<p>' . ucfirst(strftime('%A')) . strftime(', den %#d ') . ucfirst(strftime('%B'))
+					 . strftime(' år %Y. Klockan är [%H:%M:%S].') . '</p>';
 	}
 }

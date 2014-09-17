@@ -2,10 +2,19 @@
 
 // View class
 
+require_once('src/CookieScrambler.php');
+
 class CredentialsCookieHandler {
 
+	private static $filename = 'cookieTimes.txt';
 	private $usernameCookieName = 'username';
 	private $passwordCookieName = 'password';
+	private $cookieScrambler;	
+
+	public function __construct() {
+		$this->cookieScrambler = new CookieScrambler();
+	}
+
 
 	public function exists() {
 		if(!empty($_COOKIE[$this->usernameCookieName]) && !empty($_COOKIE[$this->passwordCookieName]))
@@ -14,9 +23,23 @@ class CredentialsCookieHandler {
 			return false;
 	}
 
-	public function saveUserCredentials($username, $password) {
-		setcookie($this->usernameCookieName, $username, time()+56000);
-		setcookie($this->passwordCookieName, $password, time()+56000);
+	public function saveUserCredentials($userCredentials) {
+		
+		$endTime = time() + 15;
+		file_put_contents(self::$filename, $endTime);
+
+		setcookie($this->usernameCookieName, $userCredentials[0], $endTime);
+		setcookie($this->passwordCookieName, $this->cookieScrambler->encryptCookie($userCredentials[1]), $endTime);
+	}
+
+	public function isValidCookies() {
+		
+		$cookieEndTime = file_get_contents(self::$filename);
+		
+		if(time() < $cookieEndTime)
+			return true;
+		else
+			return false; 
 	}
 
 	public function getUsername() {
@@ -26,31 +49,15 @@ class CredentialsCookieHandler {
 
 	public function getPassword() {
 		if(isset($_COOKIE[$passwordCookieName]))
-			return $_COOKIE[$this->$passwordCookieName];
+			return $this->cookieScrambler->decryptCookie($this->passwordCookieName);
 	}
 
 	public function getCredentials() {
-		return array($_COOKIE[$this->usernameCookieName], $_COOKIE[$this->passwordCookieName]);
+		return array($_COOKIE[$this->usernameCookieName], $this->cookieScrambler->decryptCookie($_COOKIE[$this->passwordCookieName]));
 	}
 
 	public function removeCookies() {
-		//unset($_COOKIE[$this->usernameCookieName]);
-		//unset($_COOKIE[$this->passwordCookieName]);
-
 		setcookie($this->usernameCookieName, '', time() - 1);
 		setcookie($this->passwordCookieName, '', time() - 1);
-
-
 	}
-
-	/*public function load() {
-		if(isset($_COOKIE[$this->cookieName]))
-			$output = $_COOKIE[$this->cookieName];
-		else
-			$output = '';
-		
-		setcookie($this->cookieName, '', time() - 1);
-
-		return $output;
-	}*/
 }

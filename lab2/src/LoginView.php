@@ -1,18 +1,15 @@
 <?php
 
-require_once('CredentialsCookieHandler.php');
-require_once('CookieHandler.php');
+require_once('src/CookieHandler.php');
 
 class LoginView {
 
 	private $loginModel;
 	private $messageCookie;
-	private $credentialsCookie;
 	private $inputCookie;
 
 	public function __construct($loginModel) {
 		$this->loginModel = $loginModel;
-		$this->credentialsCookie = new CredentialsCookieHandler();
 		$this->messageCookie = new CookieHandler('message');
 		$this->inputCookie = new CookieHandler('input');
 	}
@@ -65,7 +62,9 @@ class LoginView {
 		$this->messageCookie->save('Inloggning lyckades via cookies');
 	}
 
-	// Cookie Credentials
+	public function setFaultyCookieMessage() {
+		$this->messageCookie->save('Felaktig information i cookie');
+	}
 
 	public function doRememberMe() {
 		if(isset($_POST['rememberMe']))
@@ -74,28 +73,21 @@ class LoginView {
 			return false;
 	}
 
-	public function cookiesExist() {
-		return $this->credentialsCookie->exists();
-	}
-
-	public function readCredentialsCookie() {
-		return $this->credentialsCookie->getCredentials();
-	}
-	
-	public function removeCredentialsCookie() {
-		$this->credentialsCookie->removeCookies();
-	}
-
-	public function saveCredentials() {
-
-		$this->credentialsCookie->saveUserCredentials($_POST['username'], $_POST['password']);
-	}
-
 	// Pagereload
+
+	public function reloadPage() {
+		header('Location: ' . $_SERVER['PHP_SELF']);
+	}
 
 	public function reloadAfterPOST() {
 		if($_SERVER['REQUEST_METHOD'] == 'POST')
-			header('Location: ' . $_SERVER['PHP_SELF']);
+			$this->reloadPage();
+	}
+	
+	// Session - Useragent
+	
+	public function getUserAgent() {
+		return $_SERVER['HTTP_USER_AGENT'];
 	}
 
 	// HTML output
@@ -125,7 +117,7 @@ class LoginView {
 					</label>
 					
 					<label>Lösenord
-						<input type="text" name="password"/>
+						<input type="password" name="password"/>
 					</label>
 
 					<label>

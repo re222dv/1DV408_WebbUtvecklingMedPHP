@@ -5,8 +5,9 @@ require_once('src/CredentialsCatalogue.php');
 class LoginModel {
 
 	private $credentialsCatalogue;
-	//TEMP
-	//private $userAgent;
+	private static $usernameLocation = 'username';
+	private static $passwordLocation = 'password';
+	private static $loginStatusLocation = 'loggedIn';
 
 	public function __construct() {
 		$this->credentialsCatalogue = new CredentialsCatalogue();
@@ -20,27 +21,27 @@ class LoginModel {
 
 		if(array_key_exists($username, $catalogue)) {
 			if($catalogue[$username] == $password) {
-				$_SESSION['username'] = $username;
-				$_SESSION['isLoggedIn'] = true;
+				$_SESSION[self::$usernameLocation] = $username;
+				$_SESSION[self::$loginStatusLocation] = true;
 				return true;
-			} else {
-				return false;
-			}
+			} 
 		}
+
+		return false;
 	}
 
 	public function setStatusToLogout() {
-		$_SESSION['isLoggedIn'] = false;
+		$_SESSION[self::$loginStatusLocation] = false;
 	}
 
 	public function isLoggedIn() {
-		if(isset($_SESSION['isLoggedIn'])/* && $this->isValidSession()*/)
-			return $_SESSION['isLoggedIn'];
+		if(isset($_SESSION[self::$loginStatusLocation]))
+			return $_SESSION[self::$loginStatusLocation];
 		else
 			return false;
 	}
 
 	public function getUsername() {
-		return $_SESSION['username'];
+		return $_SESSION[self::$usernameLocation];
 	}
 }

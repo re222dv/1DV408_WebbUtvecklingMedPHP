@@ -4,7 +4,7 @@
 
 require_once('src/CookieScrambler.php');
 
-class CredentialsCookieHandler {
+class CredentialsHandler {
 
 	private static $filename = 'cookieTime.txt';
 	private $usernameCookieName = 'username';
@@ -15,15 +15,11 @@ class CredentialsCookieHandler {
 		$this->cookieScrambler = new CookieScrambler();
 	}
 
-
-	public function exists() {
-		if(!empty($_COOKIE[$this->usernameCookieName]) && !empty($_COOKIE[$this->passwordCookieName]))
-			return true;
-		else
-			return false;
+	public function cookieExist() {
+		return !empty($_COOKIE[$this->usernameCookieName]) && !empty($_COOKIE[$this->passwordCookieName]);
 	}
 
-	public function saveUserCredentials($userCredentials) {
+	public function saveCredentials(array $userCredentials) {
 		
 		$endTime = time() + 15;
 		file_put_contents(self::$filename, $endTime);
@@ -36,27 +32,24 @@ class CredentialsCookieHandler {
 		
 		$cookieEndTime = file_get_contents(self::$filename);
 		
-		if(time() < $cookieEndTime)
-			return true;
-		else
-			return false; 
+		return time() < $cookieEndTime;
 	}
 
-	public function getUsername() {
+	/*public function getUsername() {
 		if(isset($_COOKIE[$usernameCookieName]))
 			return $_COOKIE[$this->$usernameCookieName];
-	}
+	}*/
 
-	public function getPassword() {
+	/*public function getPassword() {
 		if(isset($_COOKIE[$passwordCookieName]))
 			return $this->cookieScrambler->decryptCookie($this->passwordCookieName);
-	}
+	}*/
 
 	public function getCredentials() {
 		return array($_COOKIE[$this->usernameCookieName], $this->cookieScrambler->decryptCookie($_COOKIE[$this->passwordCookieName]));
 	}
 
-	public function removeCookies() {
+	public function clearCredentials() {
 		setcookie($this->usernameCookieName, '', time() - 1);
 		setcookie($this->passwordCookieName, '', time() - 1);
 	}

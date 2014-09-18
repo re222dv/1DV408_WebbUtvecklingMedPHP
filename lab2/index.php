@@ -8,4 +8,4 @@ session_start();
 $loginC = new LoginController();
 $html = new HTMLView();
 
-$html->echoHTML($loginC->doLogin());
+$html->getHTML($loginC->doLogin());

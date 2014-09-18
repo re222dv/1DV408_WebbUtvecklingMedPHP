@@ -1,92 +1,78 @@
 <?php
 
-require_once('src/CookieHandler.php');
+require_once('src/Message.php');
 
 class LoginView {
 
 	private $loginModel;
-	private $messageCookie;
-	private $inputCookie;
+	private $message;
 
-	public function __construct($loginModel) {
+	private static $usernameLocation = 'username';
+	private static $passwordLocation = 'password';
+	private static $loginLocation = 'login';
+	private static $logoutLocation = 'logout';
+	private static $rememberMeLocation = 'rememberMe';
+
+		// private static $ POST keys
+
+
+	public function __construct(LoginModel $loginModel) {
 		$this->loginModel = $loginModel;
-		$this->messageCookie = new CookieHandler('message');
-		$this->inputCookie = new CookieHandler('input');
+		$this->message = new Message();
 	}
 
 	public function didUserLogin() {
-		if(isset($_POST['login']))
-			return true;
-		else
-			return false;
+		return isset($_POST[self::$loginLocation]);
 	}
 
 	public function didUserLogout() {
-		if(isset($_POST['logout']))
-			return true;
-		else
-			return false;
+		return isset($_POST[self::$logoutLocation]);
 	}
 
 	public function hasValidInput() {
-		if(!empty($_POST['username']) && !empty($_POST['password'])) {
+		if(!empty($_POST[self::$usernameLocation]) && !empty($_POST[self::$passwordLocation])) {
 			return true;
-		} elseif(empty($_POST['username'])) {
-			$this->messageCookie->save('Användarnamn saknas');
+		} elseif(empty($_POST[self::$usernameLocation])) {
+			$this->message->saveMessage('Användarnamn saknas');
 		} else {
-			$this->messageCookie->save('Lösenord saknas');
+			$this->message->saveMessage('Lösenord saknas');
 		}
 	}
-
+	
 	public function getCredentials() {
-		return array($_POST['username'], $_POST['password']);
+		return array($_POST[self::$usernameLocation], $_POST[self::$passwordLocation]);
 	}
 
 	public function setRemberMeLoginMessage() {
-		$this->messageCookie->save('Inloggning lyckades och vi kommer ihåg dig nästa gång');
+		$this->message->saveMessage('Inloggning lyckades och vi kommer ihåg dig nästa gång');
 	}
 
 	public function setLoginMessage() {
-		$this->messageCookie->save('Inloggning lyckades');
+		$this->message->saveMessage('Inloggning lyckades');
 	}
 
 	public function setFailMessage() {
-		$this->messageCookie->save('Felaktigt användarnamn och/eller lösenord');
+		$this->message->saveMessage('Felaktigt användarnamn och/eller lösenord');
 	}
 
 	public function setLogoutMessage() {
-		$this->messageCookie->save('Du har nu loggat ut');
+		$this->message->saveMessage('Du har nu loggat ut');
 	}
 
 	public function setCookieLoginMessage() {
-		$this->messageCookie->save('Inloggning lyckades via cookies');
+		$this->message->saveMessage('Inloggning lyckades via cookies');
 	}
 
 	public function setFaultyCookieMessage() {
-		$this->messageCookie->save('Felaktig information i cookie');
+		$this->message->saveMessage('Felaktig information i cookie');
 	}
 
 	public function setIllegalSessionMessage() {
-		$this->messageCookie->save('Otillåten session');
+		$this->message->saveMessage('Otillåten session');
 	}
-	
 
 	public function doRememberMe() {
-		if(isset($_POST['rememberMe']))
-			return true;
-		else
-			return false;
-	}
-
-	// Pagereload
-
-	public function reloadPage() {
-		header('Location: ' . $_SERVER['PHP_SELF']);
-	}
-
-	public function reloadAfterPOST() {
-		if($_SERVER['REQUEST_METHOD'] == 'POST')
-			$this->reloadPage();
+		return isset($_POST[self::$rememberMeLocation]);
 	}
 	
 	// Session - Useragent
@@ -101,36 +87,33 @@ class LoginView {
 
 		$output = '
 			<h2>Ej inloggad</h2>
-			<form action="' . $_SERVER["PHP_SELF"] .' " method="post">
+			<form action="' . $_SERVER['PHP_SELF'] .' " method="post">
 				<fieldset>
 					<legend>Login</legend>';
 
-		if($this->messageCookie->exists())
-			$output .= '<p>' . $this->messageCookie->load() . '</p>';				
+		if($this->message->hasMessage())
+			$output .= '<p>' . $this->message->getMessage() . '</p>';				
 
 		$output .= '
 					<label>Användarnamn
-						<input type="text" name="username"';
+						<input type="text" name="' . self::$usernameLocation . '"';
 
-		if($this->inputCookie->exists())
-			$output .= ' value="' . $this->inputCookie->load() . '"';
-
-		if(isset($_POST['username']))
-			$this->inputCookie->save($_POST['username']);
+		if(isset($_POST[self::$usernameLocation]))
+			$output .= ' value="' . $_POST[self::$usernameLocation] . '"';
 
 		$output .= '/>
 					</label>
 					
 					<label>Lösenord
-						<input type="password" name="password"/>
+						<input type="password" name="' . self::$passwordLocation . '"/>
 					</label>
 
 					<label>
-						<input type="checkbox" name="rememberMe"/>
+						<input type="checkbox" name="' . self::$rememberMeLocation . '"/>
 						Håll mig inloggad
 					</label>
 			
-					<input type="submit" name="login" value="Logga in"/>
+					<input type="submit" name="' . self::$loginLocation . '" value="Logga in"/>
 				</fieldset>
 			</form>';
 		
@@ -142,13 +125,13 @@ class LoginView {
 		$output = '<h2>' . $this->loginModel->getUsername() . ' är inloggad</h2>';
 
 		$output .= '
-			<form action="' . $_SERVER["PHP_SELF"] .' " method="post">';
+			<form action="' . $_SERVER['PHP_SELF'] .' " method="post">';
 				
-		if($this->messageCookie->exists())
-			$output .= '<p>' . $this->messageCookie->load() . '</p>';	
+		if($this->message->hasMessage())
+			$output .= '<p>' . $this->message->getMessage() . '</p>';	
 
 		$output .= '
-				<input type="submit" name="logout" value="Logga ut"/>
+				<input type="submit" name="' . self::$logoutLocation . '" value="Logga ut"/>
 			</form>';
 
 		return $output;

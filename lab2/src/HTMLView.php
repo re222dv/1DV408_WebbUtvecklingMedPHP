@@ -2,20 +2,20 @@
 
 class HTMLView {
 
-	public function echoHTML($content) {
+	public function getHTML($content) {
 
 		$output = '<!doctype html>
 
 			<html lang="sv">
 			<head>
 				<meta charset="utf-8"/>
-				<title>Laborationkod no222bd</title>
+				<title>Laborationskod no222bd</title>
 			</head>
 				<body>
-					<h1>Laborationkod no222bd</h1>
+					<h1>Laborationskod no222bd</h1>
 					' . $content;
 	
-		$output .= '<p>' . $this->getSwedishTimestamp() . '</p>';
+		$output .= '<p>' . $this->getSwedishTimeHTML() . '</p>';
 
 		$output .=	'</body>
 					</html>';
@@ -23,7 +23,7 @@ class HTMLView {
 		echo $output;
 	}
 
-	private function getSwedishTimestamp() {
+	private function getSwedishTimeHTML() {
 		setlocale(LC_TIME, 'sv', 'sv_SE');
 
 		return '<p>' . ucfirst(strftime('%A')) . strftime(', den %#d ') . ucfirst(strftime('%B'))

@@ -6,7 +6,7 @@ class CredentialsCatalogue {
 
 	public function __construct() {
 		$this->addUser('Admin', 'Password');		
-		$this->addUser('Tisse', 'Nisse');
+		$this->addUser('Nisse', 'Tisse');
 	}
 
 	public function getCatalogue() {

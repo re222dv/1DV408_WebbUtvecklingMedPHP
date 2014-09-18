@@ -1,6 +1,8 @@
 <?php
 
-require_once('src/Message.php');
+namespace view;
+
+require_once('src/view/Message.php');
 
 class LoginView {
 
@@ -13,12 +15,9 @@ class LoginView {
 	private static $logoutLocation = 'logout';
 	private static $rememberMeLocation = 'rememberMe';
 
-		// private static $ POST keys
-
-
-	public function __construct(LoginModel $loginModel) {
+	public function __construct(\model\LoginModel $loginModel) {
 		$this->loginModel = $loginModel;
-		$this->message = new Message();
+		$this->message = new \view\Message();
 	}
 
 	public function didUserLogin() {
@@ -65,10 +64,6 @@ class LoginView {
 
 	public function setFaultyCookieMessage() {
 		$this->message->saveMessage('Felaktig information i cookie');
-	}
-
-	public function setIllegalSessionMessage() {
-		$this->message->saveMessage('Otillåten session');
 	}
 
 	public function doRememberMe() {

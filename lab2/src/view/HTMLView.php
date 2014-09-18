@@ -1,5 +1,7 @@
 <?php
 
+namespace view;
+
 class HTMLView {
 
 	public function getHTML($content) {
@@ -15,7 +17,7 @@ class HTMLView {
 					<h1>Laborationskod no222bd</h1>
 					' . $content;
 	
-		$output .= '<p>' . $this->getSwedishTimeHTML() . '</p>';
+		$output .= '<p>' . $this->getSwedishTime() . '</p>';
 
 		$output .=	'</body>
 					</html>';
@@ -23,10 +25,10 @@ class HTMLView {
 		echo $output;
 	}
 
-	private function getSwedishTimeHTML() {
+	private function getSwedishTime() {
 		setlocale(LC_TIME, 'sv', 'sv_SE');
 
-		return '<p>' . ucfirst(strftime('%A')) . strftime(', den %#d ') . ucfirst(strftime('%B'))
-					 . strftime(' år %Y. Klockan är [%H:%M:%S].') . '</p>';
+		return ucfirst(strftime('%A')) . strftime(', den %#d ') . ucfirst(strftime('%B'))
+			   . strftime(' år %Y. Klockan är [%H:%M:%S].');
 	}
 }

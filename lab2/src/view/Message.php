@@ -1,6 +1,6 @@
 <?php
 
-// View class
+namespace view;
 
 class Message {
 

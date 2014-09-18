@@ -1,5 +1,7 @@
 <?php
 
+namespace model;
+
 class CredentialsCatalogue {
 
 	private $catalogue = array();

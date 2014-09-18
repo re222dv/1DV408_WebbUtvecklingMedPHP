@@ -1,9 +1,11 @@
 <?php
 
-require_once('src/LoginModel.php');
-require_once('src/UserControl.php');
-require_once('src/LoginView.php');
-require_once('src/CredentialsHandler.php');
+namespace controller;
+
+require_once('src/model/LoginModel.php');
+require_once('src/model/UserControl.php');
+require_once('src/view/LoginView.php');
+require_once('src/view/CredentialsHandler.php');
 
 class LoginController {
 
@@ -14,10 +16,10 @@ class LoginController {
 
 	public function __construct() {
 		
-		$this->loginModel = new LoginModel();
-		$this->userControl = new UserControl();
-		$this->credentialsHandler = new CredentialsHandler();
-		$this->loginView = new LoginView($this->loginModel);
+		$this->loginModel = new \model\LoginModel();
+		$this->userControl = new \model\UserControl();
+		$this->credentialsHandler = new \view\CredentialsHandler();
+		$this->loginView = new \view\LoginView($this->loginModel);
 	}
 
 	public function doLogin() {
@@ -38,8 +40,6 @@ class LoginController {
 
 			return $this->getHTML();
 		}
-
-		$this->loginView->setIllegalSessionMessage();
 
 		return $this->loginView->getLoginHTML();
 	}
@@ -69,7 +69,7 @@ class LoginController {
 
 	private function cookieLogin() {
 
-		if($this->credentialsHandler->isValidCookies()
+		if($this->credentialsHandler->isValidCookie()
 		&& $this->loginModel->checkCredentials($this->credentialsHandler->getCredentials())) {
 			$this->loginView->setCookieLoginMessage();
 		} else {

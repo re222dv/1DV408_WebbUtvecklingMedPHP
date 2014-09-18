@@ -1,6 +1,6 @@
 <?php
 
-// MODEL
+namespace model;
 
 class CookieScrambler {
 	

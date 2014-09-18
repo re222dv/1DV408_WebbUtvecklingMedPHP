@@ -1,6 +1,6 @@
 <?php
 
-// Model
+namespace model;
 
 class UserControl {
 

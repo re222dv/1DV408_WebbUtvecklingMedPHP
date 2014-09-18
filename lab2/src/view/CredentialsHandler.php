@@ -1,18 +1,17 @@
 <?php
 
-// View class
+namespace view;
 
-require_once('src/CookieScrambler.php');
+require_once('src/model/CookieScrambler.php');
 
 class CredentialsHandler {
 
-	private static $filename = 'cookieTime.txt';
 	private $usernameCookieName = 'username';
 	private $passwordCookieName = 'password';
 	private $cookieScrambler;	
 
 	public function __construct() {
-		$this->cookieScrambler = new CookieScrambler();
+		$this->cookieScrambler = new \model\CookieScrambler();
 	}
 
 	public function cookieExist() {
@@ -20,30 +19,29 @@ class CredentialsHandler {
 	}
 
 	public function saveCredentials(array $userCredentials) {
-		
+
+		$filename = $userCredentials[0] . '.txt';
+
 		$endTime = time() + 15;
-		file_put_contents(self::$filename, $endTime);
+		file_put_contents($filename, $endTime);
 
 		setcookie($this->usernameCookieName, $userCredentials[0], $endTime);
 		setcookie($this->passwordCookieName, $this->cookieScrambler->encryptCookie($userCredentials[1]), $endTime);
 	}
 
-	public function isValidCookies() {
+	public function isValidCookie() {
 		
-		$cookieEndTime = file_get_contents(self::$filename);
-		
-		return time() < $cookieEndTime;
+		$filename = $this->getUsername() . '.txt';
+			
+		if(@file_get_contents($filename) == false)
+			return false;
+		else 
+			return time() < file_get_contents($filename);
 	}
 
-	/*public function getUsername() {
-		if(isset($_COOKIE[$usernameCookieName]))
-			return $_COOKIE[$this->$usernameCookieName];
-	}*/
-
-	/*public function getPassword() {
-		if(isset($_COOKIE[$passwordCookieName]))
-			return $this->cookieScrambler->decryptCookie($this->passwordCookieName);
-	}*/
+	public function getUsername() {
+		return $_COOKIE[$this->usernameCookieName];
+	}
 
 	public function getCredentials() {
 		return array($_COOKIE[$this->usernameCookieName], $this->cookieScrambler->decryptCookie($_COOKIE[$this->passwordCookieName]));

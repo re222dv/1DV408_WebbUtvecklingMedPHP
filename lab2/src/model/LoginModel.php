@@ -1,6 +1,8 @@
 <?php
 
-require_once('src/CredentialsCatalogue.php');
+namespace model;
+
+require_once('src/model/CredentialsCatalogue.php');
 
 class LoginModel {
 
@@ -10,7 +12,7 @@ class LoginModel {
 	private static $loginStatusLocation = 'loggedIn';
 
 	public function __construct() {
-		$this->credentialsCatalogue = new CredentialsCatalogue();
+		$this->credentialsCatalogue = new \model\CredentialsCatalogue();
 	}
 
 	public function checkCredentials(array $credentials) {

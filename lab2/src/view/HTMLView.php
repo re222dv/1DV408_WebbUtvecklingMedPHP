@@ -2,10 +2,11 @@
 
 namespace view;
 
+// HTML5 document
 class HTMLView {
 
+	// Echos a HTML5 document with supplied content
 	public function getHTML($content) {
-
 		$output = '<!doctype html>
 
 			<html lang="sv">
@@ -25,6 +26,7 @@ class HTMLView {
 		echo $output;
 	}
 
+	// Return the date and time in Swedish
 	private function getSwedishTime() {
 		setlocale(LC_TIME, 'sv', 'sv_SE');
 

@@ -2,16 +2,21 @@
 
 namespace model;
 
+// Handles client identification data
 class UserControl {
 
-	private $sessionLocation = 'userAgent';
+	private static $sessionLocation = 'userAgent';
 
+	// Saves and compares the supplied UserAgent-string
 	public function checkUserAgent($userAgentString) {
-		if(!isset($_SESSION[$this->sessionLocation])) {
-			$_SESSION[$this->sessionLocation] = $userAgentString;
+		
+		// Save the UserAgent-string
+		if(!isset($_SESSION[self::$sessionLocation])) {
+			$_SESSION[self::$sessionLocation] = $userAgentString;
 			return true;
 		}
 
-		return $_SESSION[$this->sessionLocation] == $userAgentString;
+		// Compare saved and supplied UserAgent-string
+		return $_SESSION[self::$sessionLocation] == $userAgentString;
 	}
 }

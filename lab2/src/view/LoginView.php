@@ -9,6 +9,7 @@ class LoginView {
 	private $loginModel;
 	private $message;
 
+	// $_POST[] locations
 	private static $usernameLocation = 'username';
 	private static $passwordLocation = 'password';
 	private static $loginLocation = 'login';
@@ -20,14 +21,17 @@ class LoginView {
 		$this->message = new \view\Message();
 	}
 
+	// Check if user pressed the Login-button 
 	public function didUserLogin() {
 		return isset($_POST[self::$loginLocation]);
 	}
 
+	// Check if user pressed the Logout-button
 	public function didUserLogout() {
 		return isset($_POST[self::$logoutLocation]);
 	}
 
+	// Check if user has supplied enough data
 	public function hasValidInput() {
 		if(!empty($_POST[self::$usernameLocation]) && !empty($_POST[self::$passwordLocation])) {
 			return true;
@@ -66,20 +70,17 @@ class LoginView {
 		$this->message->saveMessage('Felaktig information i cookie');
 	}
 
+	// Check if user wants to be remembered
 	public function doRememberMe() {
 		return isset($_POST[self::$rememberMeLocation]);
 	}
-	
-	// Session - Useragent
 	
 	public function getUserAgent() {
 		return $_SERVER['HTTP_USER_AGENT'];
 	}
 
-	// HTML output
-
+	// Login HTML
 	public function getLoginHTML() {
-
 		$output = '
 			<h2>Ej inloggad</h2>
 			<form action="' . $_SERVER['PHP_SELF'] .' " method="post">
@@ -115,8 +116,8 @@ class LoginView {
 		return $output;
 	}
 
+	// Logout HTML
 	public function getLogoutHTML() {
-
 		$output = '<h2>' . $this->loginModel->getUsername() . ' är inloggad</h2>';
 
 		$output .= '

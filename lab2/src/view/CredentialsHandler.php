@@ -4,33 +4,36 @@ namespace view;
 
 require_once('src/model/CookieScrambler.php');
 
+// Handles the user credentials cookies
 class CredentialsHandler {
 
-	private $usernameCookieName = 'username';
-	private $passwordCookieName = 'password';
+	// $_COOKIE[] keys
+	private static $usernameLocation = 'username';
+	private static $passwordLocation = 'password';
 	private $cookieScrambler;	
 
 	public function __construct() {
 		$this->cookieScrambler = new \model\CookieScrambler();
 	}
 
+	// Check if cookie exists for botj username and password
 	public function cookieExist() {
-		return !empty($_COOKIE[$this->usernameCookieName]) && !empty($_COOKIE[$this->passwordCookieName]);
+		return !empty($_COOKIE[self::$usernameLocation]) && !empty($_COOKIE[self::$passwordLocation]);
 	}
 
+	// Save username and password in cookies and save timestamp on file
 	public function saveCredentials(array $userCredentials) {
-
 		$filename = $userCredentials[0] . '.txt';
 
-		$endTime = time() + 15;
+		$endTime = time() + 60;
 		file_put_contents($filename, $endTime);
 
-		setcookie($this->usernameCookieName, $userCredentials[0], $endTime);
-		setcookie($this->passwordCookieName, $this->cookieScrambler->encryptCookie($userCredentials[1]), $endTime);
+		setcookie(self::$usernameLocation, $userCredentials[0], $endTime);
+		setcookie(self::$passwordLocation, $this->cookieScrambler->encryptCookie($userCredentials[1]), $endTime);
 	}
 
+	// Check that cookie not being used past it endtime
 	public function isValidCookie() {
-		
 		$filename = $this->getUsername() . '.txt';
 			
 		if(@file_get_contents($filename) == false)
@@ -40,15 +43,16 @@ class CredentialsHandler {
 	}
 
 	public function getUsername() {
-		return $_COOKIE[$this->usernameCookieName];
+		return $_COOKIE[self::$usernameLocation];
 	}
 
 	public function getCredentials() {
-		return array($_COOKIE[$this->usernameCookieName], $this->cookieScrambler->decryptCookie($_COOKIE[$this->passwordCookieName]));
+		return array($_COOKIE[self::$usernameLocation], $this->cookieScrambler->decryptCookie($_COOKIE[self::$passwordLocation]));
 	}
 
+	// Remove cookies for username and password
 	public function clearCredentials() {
-		setcookie($this->usernameCookieName, '', time() - 1);
-		setcookie($this->passwordCookieName, '', time() - 1);
+		setcookie(self::$usernameLocation, '', time() - 1);
+		setcookie(self::$passwordLocation, '', time() - 1);
 	}
 }

@@ -15,15 +15,14 @@ class LoginController {
 	private $credentialsHandler;
 
 	public function __construct() {
-		
 		$this->loginModel = new \model\LoginModel();
 		$this->userControl = new \model\UserControl();
 		$this->credentialsHandler = new \view\CredentialsHandler();
 		$this->loginView = new \view\LoginView($this->loginModel);
 	}
 
+	// Login execution flow
 	public function doLogin() {
-
 		if($this->userControl->checkUserAgent($this->loginView->getUserAgent())) {
 			if($this->loginModel->isLoggedIn()) {
 				if($this->loginView->didUserLogout())
@@ -44,15 +43,15 @@ class LoginController {
 		return $this->loginView->getLoginHTML();
 	}
 
+	// Handles the process of logging out
 	private function logout() {
-
 		$this->loginModel->setStatusToLogout();
 		$this->credentialsHandler->clearCredentials();
 		$this->loginView->setLogoutMessage();
 	}
 
+	// Handles the process of logging in
 	private function login() {
-
 		if($this->loginView->hasValidInput()) {
 			if($this->loginModel->checkCredentials($this->loginView->getCredentials())) {
 				if($this->loginView->doRememberMe()) {
@@ -67,8 +66,8 @@ class LoginController {
 		}
 	}
 
+	// Handles the process of logging in with cookies
 	private function cookieLogin() {
-
 		if($this->credentialsHandler->isValidCookie()
 		&& $this->loginModel->checkCredentials($this->credentialsHandler->getCredentials())) {
 			$this->loginView->setCookieLoginMessage();
@@ -78,8 +77,8 @@ class LoginController {
 		}
 	}
 
+	// Return appropriate HTML depending on if user is logged in or not
 	private function getHTML() {
-
 		if($this->loginModel->isLoggedIn())
 			return $this->loginView->getLogoutHTML();	
 		else

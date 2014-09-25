@@ -5,22 +5,22 @@ namespace view;
 // Handles the user feedback
 class Message {
 
-	private $currentMessage;
-	
-	// Check if message exists
-	public function hasMessage() {
-		return isset($this->currentMessage);
-	}
+    private $currentMessage;
 
-	public function saveMessage($message) {
-		$this->currentMessage = $message;
-	}
+    // Check if message exists
+    public function hasMessage() {
+        return isset($this->currentMessage);
+    }
 
-	public function getMessage() {
-		$output = $this->currentMessage;
-			
-		unset($this->currentMessage);
+    public function saveMessage($message) {
+        $this->currentMessage = $message;
+    }
 
-		return $output;
-	}
+    public function getMessage() {
+        $output = $this->currentMessage;
+
+        unset($this->currentMessage);
+
+        return $output;
+    }
 }

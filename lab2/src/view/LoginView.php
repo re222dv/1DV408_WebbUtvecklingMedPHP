@@ -52,11 +52,15 @@ class LoginView {
         }
     }
 
-    public function getCredentials() {
-        return array($_POST[self::$usernameLocation], $_POST[self::$passwordLocation]);
+    public function getUsername() {
+        return $_POST[self::$usernameLocation];
     }
 
-    public function setRemberMeLoginMessage() {
+    public function getPassword() {
+        return $_POST[self::$passwordLocation];
+    }
+
+    public function setRememberMeLoginMessage() {
         $this->message->saveMessage('Inloggning lyckades och vi kommer ihåg dig nästa gång');
     }
 
@@ -130,7 +134,7 @@ class LoginView {
 
     // Logout HTML
     public function getLogoutHTML() {
-        $output = '<h2>'.$this->loginModel->getUsername().' är inloggad</h2>';
+        $output = '<h2>'.$this->loginModel->getUser()->getUsername().' är inloggad</h2>';
 
         $output .= '
 			<form action="'.$_SERVER['PHP_SELF'].' " method="post">';

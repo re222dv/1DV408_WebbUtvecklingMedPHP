@@ -20,6 +20,12 @@ class User {
     private $username;
 
     /**
+     * @var string
+     * [column varchar(256)]
+     */
+    private $hash;
+
+    /**
      * @var Database
      */
     public static $database;
@@ -84,12 +90,22 @@ class User {
         if ($length < 6) {
             throw new \Exception(6, self::TOO_SHORT);
         }
+
+        $this->hash = password_hash($password, PASSWORD_BCRYPT);
     }
 
     /**
      * @return bool
      */
     public function isValid() {
-        return !empty($this->username);
+        return !empty($this->username) && !empty($this->hash);
+    }
+
+    /**
+     * @param string $password
+     * @return bool
+     */
+    public function verifyPassword($password) {
+        return password_verify($password, $this->hash);
     }
 }

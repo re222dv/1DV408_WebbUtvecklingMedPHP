@@ -8,7 +8,14 @@ require_once('src/view/Message.php');
 
 class LoginView {
 
+    /**
+     * @var LoginModel
+     */
     private $loginModel;
+    /**
+     * @var UrlView
+     */
+    private $url;
     private $message;
 
     // $_POST[] locations
@@ -18,8 +25,9 @@ class LoginView {
     private static $logoutLocation = 'logout';
     private static $rememberMeLocation = 'rememberMe';
 
-    public function __construct(LoginModel $loginModel) {
+    public function __construct(LoginModel $loginModel, UrlView $url) {
         $this->loginModel = $loginModel;
+        $this->url = $url;
         $this->message = new Message();
     }
 
@@ -84,6 +92,7 @@ class LoginView {
     // Login HTML
     public function getLoginHTML() {
         $output = '
+			<a href="'.$this->url->getRegisterUrl().'">Registrera ny användare</a>
 			<h2>Ej inloggad</h2>
 			<form action="'.$_SERVER['PHP_SELF'].' " method="post">
 				<fieldset>

@@ -7,7 +7,13 @@ use model\User;
 
 class RegisterView {
     private $errors = [];
+    private $message;
     private $url;
+    /**
+     * @var User
+     */
+    private $user;
+    private $username;
 
     public function __construct(UrlView $url) {
         $this->url = $url;
@@ -27,19 +33,18 @@ class RegisterView {
     }
 
     public function getUser() {
-        $user = new User();
+        $this->user = new User();
         if (!$this->shouldRegister()) {
-            return $user;
+            return $this->user;
         }
 
         if ($_POST['password'] !== $_POST['password2']) {
             $this->errors[] = 'Lösenorden matchar inte.';
-            return $user;
+            return $this->user;
         }
 
-
         try {
-            $user->setUsername($_POST['username']);
+            $this->user->setUsername($_POST['username']);
         } catch (\Exception $e) {
             if ($e->getCode() === USER::TOO_SHORT) {
                 $length = $e->getMessage();
@@ -48,6 +53,7 @@ class RegisterView {
                 $length = $e->getMessage();
                 $this->errors[] = "Användarnamnet har för många tecken. Max $length tecken";
             } elseif ($e->getCode() === USER::INVALID_CHARS) {
+                $this->username = $e->getMessage();
                 $this->errors[] = "Användarnamnet innehåller ogiltiga tecken";
             } else {
                 throw $e;
@@ -55,7 +61,7 @@ class RegisterView {
         }
 
         try {
-            $user->setPassword($_POST['password']);
+            $this->user->setPassword($_POST['password']);
         } catch (\Exception $e) {
             if ($e->getCode() === USER::TOO_SHORT) {
                 $length = $e->getMessage();
@@ -65,14 +71,25 @@ class RegisterView {
             }
         }
 
-        return $user;
+        return $this->user;
+    }
+
+    public function setSuccess() {
+        $this->message = "Registrering av ny användare lyckades";
+    }
+
+    public function setUsernameIsTaken() {
+        $this->errors[] = "Användarnamnet är redan upptaget";
     }
 
     public function render() {
-        $user = $this->getUser();
-        $username = $user->getUsername();
         $errors = $this->renderErrors();
         $loginUrl = $this->url->getLoginUrl();
+        $message = $this->message;
+        $username = $this->user->getUsername();
+        if (!$username) {
+            $username = $this->username;
+        }
 
         return <<<HTML
 <a href="$loginUrl">Tillbaka</a>
@@ -83,6 +100,9 @@ class RegisterView {
         <ul>
             $errors
         </ul>
+        <p>
+            $message
+        </p>
         <label>
             Namn: <input name="username" value="$username" />
         </label><br />

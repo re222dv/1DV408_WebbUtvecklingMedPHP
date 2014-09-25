@@ -4,6 +4,7 @@ namespace controller;
 
 require_once('src/view/RegisterView.php');
 
+use model\User;
 use view\RegisterView;
 use view\UrlView;
 
@@ -23,6 +24,17 @@ class RegisterController {
     }
 
     public function render() {
+        $user = $this->view->getUser();
+
+        if ($user and $user->isValid()) {
+            try {
+                User::create($user);
+                $this->view->setSuccess();
+            } catch (\Exception $e) {
+                $this->view->setUsernameIsTaken();
+            }
+        }
+
         return $this->view->render();
     }
 }

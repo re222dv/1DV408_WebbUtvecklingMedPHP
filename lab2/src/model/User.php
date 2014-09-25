@@ -9,6 +9,12 @@ class User {
 
     const INVALID_USERNAME_CHARS = '/[^a-z0-9\-_\.]/i';
 
+    private $username;
+
+    public function getUsername() {
+        return $this->username;
+    }
+
     public function setUsername($username) {
         $length = mb_strlen($username);
         if ($length < 3) {
@@ -16,7 +22,8 @@ class User {
         } elseif ($length > 20) {
             throw new \Exception(20, self::TOO_LONG);
         }
-        if (preg_match(self::INVALID_USERNAME_CHARS, $username)) {
+        $this->username = preg_replace(self::INVALID_USERNAME_CHARS, '', $username);
+        if ($this->username !== $username) {
             throw new \Exception(null, self::INVALID_CHARS);
         }
     }

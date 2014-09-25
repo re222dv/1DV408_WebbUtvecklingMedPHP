@@ -27,16 +27,16 @@ class RegisterView {
     }
 
     public function getUser() {
+        $user = new User();
         if (!$this->shouldRegister()) {
-            return null;
+            return $user;
         }
 
         if ($_POST['password'] !== $_POST['password2']) {
             $this->errors[] = 'Lösenorden matchar inte.';
-            return null;
+            return $user;
         }
 
-        $user = new User();
 
         try {
             $user->setUsername($_POST['username']);
@@ -69,7 +69,8 @@ class RegisterView {
     }
 
     public function render() {
-        $this->getUser();
+        $user = $this->getUser();
+        $username = $user->getUsername();
         $errors = $this->renderErrors();
         $loginUrl = $this->url->getLoginUrl();
 
@@ -83,7 +84,7 @@ class RegisterView {
             $errors
         </ul>
         <label>
-            Namn: <input name="username" />
+            Namn: <input name="username" value="$username" />
         </label><br />
         <label>
             Lösenord: <input type="password" name="password" />

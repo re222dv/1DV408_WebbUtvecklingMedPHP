@@ -83,6 +83,30 @@ class Database {
     }
 
     /**
+     * Get objects of $class
+     *
+     * @param string $class
+     * @param int|int[] $ids One id or one array of ids to get
+     * @return object|array The object or objects with the corresponding id
+     */
+    public function get($class, $ids) {
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+        $limit = count($ids);
+
+        $where = '`id` ';
+        if ($limit == 1) {
+            $where .= "= ?";
+        } else {
+            $in = join(',', array_fill(0, count($ids), '?'));
+            $where .= "IN ($in)";
+        }
+
+        return $this->select($class, $where, $ids, $limit);
+    }
+
+    /**
      * Insert $object into its corresponding table
      *
      * @param object $object

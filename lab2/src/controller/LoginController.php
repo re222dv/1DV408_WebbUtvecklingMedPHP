@@ -2,16 +2,17 @@
 
 namespace controller;
 
-use model\LoginModel;
-use model\UserControl;
-use view\CredentialsHandler;
-use view\LoginView;
-use view\UrlView;
-
 require_once('src/model/LoginModel.php');
 require_once('src/model/UserControl.php');
 require_once('src/view/LoginView.php');
 //require_once('src/view/CredentialsHandler.php');
+
+use model\LoginModel;
+use model\UserControl;
+use model\UserRepository;
+use view\CredentialsHandler;
+use view\LoginView;
+use view\UrlView;
 
 class LoginController {
 
@@ -20,8 +21,8 @@ class LoginController {
     private $userControl;
 //    private $credentialsHandler;
 
-    public function __construct(UrlView $url) {
-        $this->loginModel = new LoginModel();
+    public function __construct(UrlView $url, UserRepository $userRepository) {
+        $this->loginModel = new LoginModel($userRepository);
         $this->userControl = new UserControl();
 //        $this->credentialsHandler = new CredentialsHandler();
         $this->loginView = new LoginView($this->loginModel, $url);
@@ -30,7 +31,7 @@ class LoginController {
     // Login execution flow
     public function doLogin() {
         if ($this->userControl->checkUserAgent($this->loginView->getUserAgent())) {
-            if ($this->loginModel->getUser()) {
+            if ($this->loginModel->isLoggedIn()) {
                 if ($this->loginView->didUserLogout()) {
                     $this->logout();
                 }

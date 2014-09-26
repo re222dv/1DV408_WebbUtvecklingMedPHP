@@ -1,8 +1,6 @@
 <?php
 namespace view;
 
-require_once('src/model/User.php');
-
 use model\User;
 
 class RegisterView {

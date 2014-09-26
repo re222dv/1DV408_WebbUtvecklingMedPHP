@@ -2,10 +2,6 @@
 
 namespace model;
 
-require_once('src/model/Database.php');
-
-use model\Database;
-
 class User {
     const TOO_SHORT = 1;
     const TOO_LONG = 2;
@@ -24,36 +20,6 @@ class User {
      * [column varchar(256)]
      */
     private $hash;
-
-    /**
-     * @var Database
-     */
-    public static $database;
-
-    /**
-     * @param User $user
-     * @throws \Exception if username is taken
-     */
-    public static function create($user) {
-        if (self::getByUsername($user->getUsername())) {
-            throw new \Exception('Username is taken');
-        }
-
-        self::$database->insert($user);
-    }
-
-    /**
-     * @param string $username
-     * @return User|null An user object or null if not found
-     */
-    public static function getByUsername($username) {
-        if (!isset(self::$database)) {
-            self::$database = new Database();
-            self::$database->assertTable(self::class);
-        }
-
-        return self::$database->select(self::class, '`username` = ?', [$username], 1);
-    }
 
     /**
      * @return string

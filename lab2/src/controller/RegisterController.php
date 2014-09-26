@@ -2,9 +2,10 @@
 
 namespace controller;
 
+require_once('src/model/UserRepository.php');
 require_once('src/view/RegisterView.php');
 
-use model\User;
+use model\UserRepository;
 use view\RegisterView;
 use view\UrlView;
 
@@ -14,12 +15,17 @@ class RegisterController {
      */
     private $url;
     /**
+     * @var UserRepository
+     */
+    private $userRepository;
+    /**
      * @var RegisterView
      */
     private $view;
 
-    public function __construct(UrlView $url) {
+    public function __construct(UrlView $url, UserRepository $userRepository) {
         $this->url = $url;
+        $this->userRepository = $userRepository;
         $this->view = new RegisterView($url);
     }
 
@@ -28,7 +34,7 @@ class RegisterController {
 
         if ($user and $user->isValid()) {
             try {
-                User::create($user);
+                $this->userRepository->create($user);
                 $this->view->setSuccess();
             } catch (\Exception $e) {
                 $this->view->setUsernameIsTaken();

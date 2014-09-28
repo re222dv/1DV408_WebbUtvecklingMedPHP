@@ -10,6 +10,11 @@ class User {
     const INVALID_USERNAME_CHARS = '/[^a-z0-9\-_\.]/i';
 
     /**
+     * @var int
+     */
+    private $id;
+
+    /**
      * @var string
      * [column varchar(20)]
      */
@@ -58,6 +63,13 @@ class User {
         }
 
         $this->hash = password_hash($password, PASSWORD_BCRYPT);
+    }
+
+    /**
+     * @return int
+     */
+    public function getId() {
+        return $this->id;
     }
 
     /**

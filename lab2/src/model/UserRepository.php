@@ -36,4 +36,12 @@ class UserRepository {
     public function getByUsername($username) {
         return $this->database->select(User::class, '`username` = ?', [$username], 1);
     }
+
+    /**
+     * @param Token $token
+     * @return User|null An user object or null if not found
+     */
+    public function getByToken(Token $token) {
+        return $this->database->get(User::class, $token->getUserId());
+    }
 }

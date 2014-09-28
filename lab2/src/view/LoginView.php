@@ -50,6 +50,7 @@ class LoginView {
         } else {
             $this->message->saveMessage('Lösenord saknas');
         }
+        return false;
     }
 
     public function getUsername() {

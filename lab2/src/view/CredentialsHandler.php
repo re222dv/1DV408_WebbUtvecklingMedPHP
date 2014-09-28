@@ -2,60 +2,49 @@
 
 namespace view;
 
-use model\CookieScrambler;
+require_once('src/model/TokenRepository.php');
 
-require_once('src/model/CookieScrambler.php');
+use model\Token;
+use model\TokenRepository;
+use model\User;
 
 // Handles the user credentials cookies
 class CredentialsHandler {
-
     // $_COOKIE[] keys
-    private static $usernameLocation = 'username';
-    private static $passwordLocation = 'password';
-    private $cookieScrambler;
+    private static $secretLocation = 'secret';
+
+    /**
+     * @var TokenRepository
+     */
+    private $tokenRepository;
 
     public function __construct() {
-        $this->cookieScrambler = new CookieScrambler();
+        $this->tokenRepository = new TokenRepository();
     }
 
     // Check if cookie exists for both username and password
     public function cookieExist() {
-        return !empty($_COOKIE[self::$usernameLocation]) && !empty($_COOKIE[self::$passwordLocation]);
+        return isset($_COOKIE[self::$secretLocation]);
     }
 
     // Save username and password in cookies and save timestamp on file
-    public function saveCredentials(array $userCredentials) {
-        $filename = $userCredentials[0].'.txt';
+    public function saveCredentials(User $user) {
+        $token = new Token($user);
 
-        $endTime = time() + 60;
-        file_put_contents($filename, $endTime);
-
-        setcookie(self::$usernameLocation, $userCredentials[0], $endTime);
-        setcookie(self::$passwordLocation, $this->cookieScrambler->encryptCookie($userCredentials[1]), $endTime);
+        setcookie(self::$secretLocation, $token->getSecret(), $token->getExpirationDate());
+        $this->tokenRepository->insert($token);
     }
 
-    // Check that cookie not being used past it endtime
-    public function isValidCookie() {
-        $filename = $this->getUsername().'.txt';
-
-        if (@file_get_contents($filename) == false) {
-            return false;
-        } else {
-            return time() < file_get_contents($filename);
-        }
-    }
-
-    public function getUsername() {
-        return $_COOKIE[self::$usernameLocation];
-    }
-
+    /**
+     * @return Token
+     * @throws \Exception if the token is invalid
+     */
     public function getCredentials() {
-        return array($_COOKIE[self::$usernameLocation], $this->cookieScrambler->decryptCookie($_COOKIE[self::$passwordLocation]));
+        return $this->tokenRepository->getBySecret($_COOKIE[self::$secretLocation]);
     }
 
     // Remove cookies for username and password
     public function clearCredentials() {
-        setcookie(self::$usernameLocation, '', time() - 1);
-        setcookie(self::$passwordLocation, '', time() - 1);
+        setcookie(self::$secretLocation, null, 1);
     }
 }

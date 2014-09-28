@@ -18,10 +18,20 @@ class LoginModel {
 
     // Check if the supplied credentials are valid
     public function logIn($username, $password) {
-        $user = User::getByUsername($username);
+        $user = $this->userRepository->getByUsername($username);
 
         if ($user and $user->verifyPassword($password)) {
             $_SESSION[self::$usernameLocation] = $username;
+            return true;
+        }
+
+        return false;
+    }
+    public function logInByToken($token) {
+        $user = $this->userRepository->getByToken($token);
+
+        if ($user) {
+            $_SESSION[self::$usernameLocation] = $user->getUsername();
             return true;
         }
 

@@ -96,4 +96,8 @@ class LoginController {
             return $this->loginView->getLoginHTML();
         }
     }
+
+    public function setRegisterSuccess() {
+        $this->loginView->setRegisterSuccess();
+    }
 }

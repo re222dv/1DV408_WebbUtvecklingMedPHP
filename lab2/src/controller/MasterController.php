@@ -37,8 +37,13 @@ class MasterController {
             return $this->login->doLogin();
 
         } elseif ($this->url->isRegister()) {
-            return $this->register->render();
+            $view = $this->register->render();
+            if ($view) {
+                return $view;
+            }
 
+            $this->login->setRegisterSuccess();
+            return $this->login->doLogin();
         } else {
             throw new \Exception(404);
         }

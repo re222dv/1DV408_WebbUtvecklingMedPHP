@@ -35,7 +35,7 @@ class RegisterController {
         if ($user and $user->isValid()) {
             try {
                 $this->userRepository->create($user);
-                $this->view->setSuccess();
+                return null;
             } catch (\Exception $e) {
                 $this->view->setUsernameIsTaken();
             }

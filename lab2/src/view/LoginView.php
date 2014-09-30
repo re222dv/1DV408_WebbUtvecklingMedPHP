@@ -65,6 +65,10 @@ class LoginView {
         $this->message->saveMessage('Inloggning lyckades och vi kommer ihåg dig nästa gång');
     }
 
+    public function setRegisterSuccess() {
+        $this->message->saveMessage('Registrering av ny användare lyckades');
+    }
+
     public function setLoginMessage() {
         $this->message->saveMessage('Inloggning lyckades');
     }

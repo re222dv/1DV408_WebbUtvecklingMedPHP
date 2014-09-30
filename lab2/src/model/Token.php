@@ -23,7 +23,7 @@ class Token {
 
     public function __construct(User $user) {
         $this->secret = openssl_random_pseudo_bytes(512);
-        $this->expirationDate = strtotime('+2 hours');
+        $this->expirationDate = strtotime('+2 minutes');
         $this->userId = $user->getId();
     }
 
@@ -41,6 +41,9 @@ class Token {
         return $this->expirationDate;
     }
 
+    /**
+     * @return int
+     */
     public function getUserId() {
         return $this->userId;
     }

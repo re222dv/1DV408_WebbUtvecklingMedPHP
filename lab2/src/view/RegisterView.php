@@ -72,10 +72,6 @@ class RegisterView {
         return $this->user;
     }
 
-    public function setSuccess() {
-        $this->message = "Registrering av ny användare lyckades";
-    }
-
     public function setUsernameIsTaken() {
         $this->errors[] = "Användarnamnet är redan upptaget";
     }

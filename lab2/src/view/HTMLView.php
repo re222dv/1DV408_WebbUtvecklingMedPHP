@@ -28,9 +28,17 @@ class HTMLView {
 
     // Return the date and time in Swedish
     private function getSwedishTime() {
-        setlocale(LC_TIME, 'sv', 'sv_SE');
+        $days = [
+            'Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'
+        ];
+        $months = [
+            'Januari', 'Februari', 'Mars', 'April', 'Maj', 'Juni', 'Juli',
+            'Augusti', 'September', 'Oktober', 'November', 'December'
+        ];
 
-        return ucfirst(strftime('%A')).strftime(', den %#d ').ucfirst(strftime('%B'))
+        date_default_timezone_set('Europe/Stockholm');
+
+        return $days[date('w')].', den '.date('j').' '.$months[date('n') - 1]
             .strftime(' år %Y. Klockan är [%H:%M:%S].');
     }
 }

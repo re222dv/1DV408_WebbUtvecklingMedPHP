@@ -37,6 +37,7 @@ class RegisterView {
         }
 
         if ($_POST['password'] !== $_POST['password2']) {
+            $this->username = $_POST['username'];
             $this->errors[] = 'Lösenorden matchar inte.';
             return $this->user;
         }
@@ -44,6 +45,7 @@ class RegisterView {
         try {
             $this->user->setUsername($_POST['username']);
         } catch (\Exception $e) {
+            $this->username = $_POST['username'];
             if ($e->getCode() === USER::TOO_SHORT) {
                 $length = $e->getMessage();
                 $this->errors[] = "Användarnamnet har för få tecken. Minst $length tecken";
